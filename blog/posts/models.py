@@ -68,3 +68,35 @@ class Post(models.Model):
             self.publish.day,
             self.slug
         ])
+
+
+class Comment(models.Model):
+    """ Modelo para almacenar comentarios relacionados con cun post
+
+    The related_name attribute allows you to name the attribute that you use for
+    the relationship from the related object back to this one. After defining this, you
+    can retrieve the post of a comment object using comment.post and retrieve all
+    comments of a post using post.comments.all()
+
+     """
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+    name = models.CharField(
+        max_length=80,
+    )
+    email = models.EmailField()
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return f'Comment by {self.name} on {self.post}'

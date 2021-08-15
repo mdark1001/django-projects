@@ -28,6 +28,15 @@
         {% empty %}
         <p>There are no comments yet.</p>
     {% endfor %}
+    <h2>Similar posts</h2>
+    {% for post in similar_post %}
+        <p>
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </p>
+        {% empty %}
+        There aren't similar posts yet.
+    {% endfor %}
+
     {% if new_comment %}
         <h2>Your comment has been added.</h2>
     {% else %}

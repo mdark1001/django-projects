@@ -1,16 +1,26 @@
 from django.core.mail import send_mail
+from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.generic import ListView
 from .forms import EmailForm, CommentForm
 
 from .models import Post
+from taggit.models import Tag
 
 
 # Create your views here.
 
-def post_list(request):
+def post_list(request, tag_slug=None):
+    """
+
+    """
     posts = Post.published.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        print(tag)
+        posts = posts.filter(tags__in=[tag])
     paginator = Paginator(posts, 10)  #
     page = request.GET.get('page')
     try:
@@ -20,10 +30,13 @@ def post_list(request):
     except  EmptyPage:
         posts = paginator.page(paginator.num_pages)
 
-    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts})
+    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts, 'tag': tag})
 
 
 def post_detail(request, year, month, day, post):
+    """
+
+    """
     post = get_object_or_404(Post, slug=post,
                              status='published',
                              publish__year=year,
@@ -41,12 +54,20 @@ def post_detail(request, year, month, day, post):
             new_comment.save()
     else:
         comment_form = CommentForm()
+    # Se incluye un método para obtener los post similares.
+    # list similar post
+    post_tags_ids = post.tags.values_list('id', flat=True)  # values_list return tuples whit values for the given fields
+    similar_post = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)  # excluye el post actual
+    print(similar_post)
+    similar_post = similar_post.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4]
+    print(similar_post)
     return render(request,
                   'blog/post/detail.html',
                   {'post': post,
                    'comments': comments,
                    'new_comment': new_comment,
-                   'comment_form': comment_form
+                   'comment_form': comment_form,
+                   'similar_post': similar_post,
                    })
 
 

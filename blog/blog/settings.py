@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-sfd+(@7b6r#7(ibu=58l)hfpk$!i(b*lv)ii^vfs$2yq()jk*1
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# SITEMAP
+SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
     # Third
     'taggit',
     # custom apps

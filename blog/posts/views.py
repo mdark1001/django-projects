@@ -58,9 +58,7 @@ def post_detail(request, year, month, day, post):
     # list similar post
     post_tags_ids = post.tags.values_list('id', flat=True)  # values_list return tuples whit values for the given fields
     similar_post = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)  # excluye el post actual
-    print(similar_post)
     similar_post = similar_post.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4]
-    print(similar_post)
     return render(request,
                   'blog/post/detail.html',
                   {'post': post,

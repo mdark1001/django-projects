@@ -18,8 +18,17 @@ from django.urls import path
 from django.urls.conf import include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.sitemaps.views import sitemap
+
+from posts.sitemaps import PostSitemap
+
+sitemaps = {
+    'posts': PostSitemap,
+}
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('blog/',include('posts.urls',namespace='posts')),
-] +  static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+                  path('admin/', admin.site.urls),
+                  path('blog/', include('posts.urls', namespace='posts')),
+                  path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+                       name='django.contrib.sitemaps.views.sitemap')
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

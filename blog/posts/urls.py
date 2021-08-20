@@ -1,6 +1,7 @@
 """Create urls for post app"""
 
 from django.urls import path
+
 from . import views
 
 app_name = 'post'
